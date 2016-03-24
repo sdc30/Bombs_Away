@@ -1,8 +1,11 @@
 class Tank {
-  int health, x_pos, y_pos, bombCount, arc, score, speed, bound_left, bound_right, line_x, line_y,
-  imgW, imgH;
+  int health, x_pos, y_pos, bombCount, arc, score, speed, bound_left, bound_right, line_x, line_y, 
+    imgW, imgH, tankTime, count;
   gunLine gl;
   ArrayList<Bomb> bl;
+
+  boolean fired = false;
+  Bomb currentBomb;
 
   public Tank(int x, int y, int bombs, int spd) {
     health = 100;
@@ -11,8 +14,9 @@ class Tank {
     speed = spd;
     line_x = x_pos = x;
     line_y = y_pos = y;
-    gl = new gunLine(x_pos+imgW, y_pos+imgH, x_pos, 0);
+    gl = new gunLine(x_pos+imgW, y_pos+imgH, x_pos+imgW, y_pos+imgH);
     bl = new ArrayList<Bomb>();
+    tankTime = 0;
   }
 
   public void setBounds(int left, int right) {
@@ -28,8 +32,26 @@ class Tank {
   public void fire(int x, int y) {
     if (bl.size()-1 > 0) {
       Bomb b = bl.get(bl.size()-1);
-      //b.end(line_x, line_y);
-      //b.position(x+x_pos+imgW, y+y_pos+imgH);
     }
+  }
+
+
+  public void timeReset() {
+
+    tankTime = 0;
+  }
+
+  public void countReset() {
+    count = 0;
+  }
+
+  public void negateFire() {
+
+    fired = !fired;
+  }
+
+  public void hit() {
+
+    score++;
   }
 }

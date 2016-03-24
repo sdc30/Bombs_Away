@@ -2,6 +2,8 @@ static class Logic {
   public static int wd, ht;
   public static float gravity = 9.8;
   public static volatile boolean gameOver = false;
+  boolean isPaused = true;
+  boolean p1Line = false, p2Line = false;
 
   public Logic(int w, int h) {
     wd = w;
@@ -20,7 +22,7 @@ static class Logic {
       }
     } else {
     }
-    //System.out.println(x + " " + x_next);
+
     return x_next;
   }
 
@@ -35,40 +37,40 @@ static class Logic {
         t.x_pos = t.bound_left;
     }
   }
-    
-  
+
+
   public void displacement(Bomb b, float t, float angle) {
     float ax = 0, ay = gravity;
-    
+
     float vxI =  b.speed * cos(angle);
     float vyI =  b.speed * sin(angle);
-    
-    //System.out.println("" + vxI  + " : " + vyI );
-    
+
 
     float x = vxI * t + .5*ax*(t*t);
     float y = vyI * t + .5*ay*(t*t);
-    
-    
-   //b.h_dis = constrain(x, 0, 1000);
-   //b.v_dis = constrain(y, 0, 1000);
-    
-    
-    b.h_dis = x;
-    b.v_dis = y;
-    //System.out.println("" + b.h_dis  + " : " +  b.v_dis);
-    //return y;
+
+
+    b.addXY(x, y);
   }
-  
-  public void collision(Plane p, Bomb bmb) {
-    if(dist(p.x_pos, p.y_pos, bmb.h_dis, -bmb.v_dis) < bmb.radius) {
-      //System.out.println("yes");
-      //System.out.println("" + p.id + " : " + p.x_pos + " : " + p.y_pos + " : " + bmb.h_dis + " : " + bmb.v_dis);
-      //System.out.println("" + dist(p.x_pos, p.y_pos, bmb.h_dis, bmb.v_dis));
-     
+
+  public int collision(Plane p, Bomb b, int i) {
+    //System.out.println("" + p.x_pos + " : " + p.y_pos + " : " + b.bmb_X.get(i)+ " : " + -b.bmb_Y.get(i) );
+    //System.out.println("" + dist(p.x_pos, p.y_pos, b.bmb_X.get(i), -b.bmb_Y.get(i)) );
+    int j = 0;
+
+
+    if (b.bmb_X.get(i) > p.x_pos && b.bmb_X.get(i) < (p.x_pos + p.imgW)) {
+
+      if (-b.bmb_Y.get(i) > p.y_pos && -b.bmb_Y.get(i) < (p.y_pos + p.imgH)) {
+        System.out.println("x " + b.bmb_X.get(i) + " : " + p.x_pos + " : " + (p.x_pos + p.imgW) );
+        System.out.println("y " + -b.bmb_Y.get(i) + " : " + p.y_pos  + " : " + (p.y_pos + p.imgH) ); 
+        j = 1;
+      }
     }
-     //System.out.println("" + p.id + " : " + p.x_pos + " : " + p.y_pos + " : " + bmb.h_dis + " : " + bmb.v_dis);
-     //System.out.println("" + dist(p.x_pos, p.y_pos, bmb.h_dis, bmb.v_dis));
-    
+    return j;
+  }
+
+
+  public void planeDrop(Plane p) {
   }
 }

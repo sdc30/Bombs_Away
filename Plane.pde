@@ -1,6 +1,6 @@
 class Plane {
   int health, x_pos, y_pos, bombCount, arc, speed, imgW, imgH, id;
-  
+
 
   public Plane(int x, int y, int bombs, int spd, int w, int h, int id_) {
     health = 100;
