@@ -37,7 +37,7 @@ static class Logic {
   }
     
   
-  public float displacement(Bomb b, float t, float angle) {
+  public void displacement(Bomb b, float t, float angle) {
     float ax = 0, ay = gravity;
     
     float vxI =  b.speed * cos(angle);
@@ -49,10 +49,26 @@ static class Logic {
     float x = vxI * t + .5*ax*(t*t);
     float y = vyI * t + .5*ay*(t*t);
     
-    //System.out.println("" + x  + " : " +  y);
+    
+   //b.h_dis = constrain(x, 0, 1000);
+   //b.v_dis = constrain(y, 0, 1000);
+    
     
     b.h_dis = x;
     b.v_dis = y;
-    return y;
+    //System.out.println("" + b.h_dis  + " : " +  b.v_dis);
+    //return y;
+  }
+  
+  public void collision(Plane p, Bomb bmb) {
+    if(dist(p.x_pos, p.y_pos, bmb.h_dis, -bmb.v_dis) < bmb.radius) {
+      //System.out.println("yes");
+      //System.out.println("" + p.id + " : " + p.x_pos + " : " + p.y_pos + " : " + bmb.h_dis + " : " + bmb.v_dis);
+      //System.out.println("" + dist(p.x_pos, p.y_pos, bmb.h_dis, bmb.v_dis));
+     
+    }
+     //System.out.println("" + p.id + " : " + p.x_pos + " : " + p.y_pos + " : " + bmb.h_dis + " : " + bmb.v_dis);
+     //System.out.println("" + dist(p.x_pos, p.y_pos, bmb.h_dis, bmb.v_dis));
+    
   }
 }

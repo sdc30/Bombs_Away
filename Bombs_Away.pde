@@ -14,7 +14,8 @@ void setup() {
   size(1000, 1000);
   l = new Logic(1000, 1000);
   for (int i = 0; i < 3; i++) {
-    planes.add(new Plane(getRand1(), getRand1(), 3, rand()));
+    planes.add(new Plane(getRand1(), getRand1(), 3, rand(), t1.width/2, t1.height/2, i));
+
   }
 
   tank1 = new Tank(100, 750, 3, 3);
@@ -28,11 +29,11 @@ void setup() {
   tank2.imgH = t2.height/2;
 
   for (int i = 0; i < 10; i++) {
-    tank1.bl.add(new Bomb(10, 4, 2, 5, 10, 120));
+    tank1.bl.add(new Bomb(10, 25, 2, 5, 10, 120));
   } 
 
   for (int i = 0; i < 10; i++) {
-    tank2.bl.add(new Bomb(10, 4, 2, 5, 10, 120));
+    tank2.bl.add(new Bomb(10, 25, 2, 5, 10, 120));
   }
 }
 
@@ -42,6 +43,7 @@ void draw() {
   background(bg);
   imgUpdate();
   check();
+  
 }
 
 void keyPressed(KeyEvent e) {
@@ -53,23 +55,27 @@ void keyPressed(KeyEvent e) {
 
       break;
     case DOWN: 
-      Bomb b = tank1.bl.get(tank1.bl.size()-1);
+      Bomb bmb = tank1.bl.get(tank1.bl.size()-1);
       
       float angle1 = atan2(tank1.gl.p4 - tank1.gl.p2 , tank1.gl.p3 - tank1.gl.p1);
       // System.out.println("" + tank1.gl.p1 + " : " + tank1.gl.p2 + " : " + tank1.gl.p3 + " : " + tank1.gl.p4 );
       float t = 0;
-      pushMatrix();
-      translate(tank1.x_pos+tank1.imgW, tank1.y_pos+tank1.imgH);
+      
       
       do {
-        float xd = l.displacement(b, t+=.25, angle1);
-        System.out.println("" + xd);
+         pushMatrix();
+         translate(tank1.x_pos+tank1.imgW, tank1.y_pos+tank1.imgH);
+         l.displacement(bmb, t+=.25, angle1);
+         bmb.drawB();
+         popMatrix();
+        //System.out.println("" + xd);
         
+        checkTwo(bmb);
+       
         
-        b.drawB();
-        
-      }  while (t < 2*b.time);
-      popMatrix();
+      }  while (t < bmb.time);
+     
+      //checkTwo();
       break;
     case LEFT: 
       tank1.x_pos -= tank1.speed;
@@ -118,8 +124,9 @@ void imgUpdate() {
     tank1.gl.drawL();
   if (p2Line)
     tank2.gl.drawL();
-  for (Plane plane : planes)
+  for (Plane plane : planes) { 
     image(p, plane.x_pos = l.movement(plane.x_pos, plane.x_pos+plane.speed), plane.y_pos);
+  }
 }
 
 int getRand1() {
@@ -151,10 +158,46 @@ void check() {
       break;
     case CENTER: 
       p2Line = !p2Line;
+       Bomb b = tank1.bl.get(tank2.bl.size()-1);
+      
+      float angle1 = atan2(tank2.gl.p4 - tank2.gl.p2 , tank2.gl.p3 - tank2.gl.p1);
+      // System.out.println("" + tank1.gl.p1 + " : " + tank1.gl.p2 + " : " + tank1.gl.p3 + " : " + tank1.gl.p4 );
+      float t = 0;
+      pushMatrix();
+      translate(tank2.x_pos+tank2.imgW, tank2.y_pos+tank2.imgH);
+      
+      do {
+        l.displacement(b, t+=.25, angle1);
+        //System.out.println("" + xd);
+        
+        
+        b.drawB();
+        
+      }  while (t < 2*b.time);
+      popMatrix();
 
       break;
     }
   }
+}
+
+void checkTwo(Bomb bomb) {
+ 
+  //for(int i = 0; i < tank1.bl.size(); i++) {
+    //Bomb b = tank1.bl.get(i);
+    for (Plane plane : planes) { 
+      l.collision(plane, bomb);
+      
+    }
+  //}
+  
+  //for(int i = 0; i < tank2.bl.size(); i++) {
+    //Bomb b = tank2.bl.get(i);
+    //for (Plane plane : planes) { 
+      //l.collision(plane, b);
+    //}
+  //}
+  
 }
 
 void mouseWheel(MouseEvent e) {

@@ -22,10 +22,10 @@ class gunLine {
     strokeWeight(2);
     stroke(255, 0, 0);
     //System.out.println("" + p1 + ":" + p2 + ":" + p3 + ":" + p4);
-    constrain(p1, 0, 1000);
-    constrain(p2, 0, 1000);
-    constrain(p3, 0, 1000);
-    constrain(p4, 0, 1000);
+    p1 = constrain(p1, 0, 1000);
+    p2 = constrain(p2, 0, 1000);
+    p3 = constrain(p3, 0, 1000);
+    p4 = constrain(p4, 0, 1000);
 
     line(p1, p2, p3, p4);
   }

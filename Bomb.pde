@@ -1,5 +1,5 @@
 class Bomb {
-  int x_pos, y_pos, damage, radius, range, fuseTime, time, endX, endY, speed;
+  int x_pos, y_pos, damage, radius, range, fuseTime, time, endX, endY, speed, count;
   float  h_dis, v_dis;
   
 
@@ -32,7 +32,7 @@ class Bomb {
     //constrain(h_dis, 0, endX);
     //constrain(v_dis, 0, endY);
     
-    ellipse(h_dis, v_dis, 20, 20);
+    ellipse(h_dis, v_dis, radius, radius);
     //ellipseMode(CENTER);
   }
   
