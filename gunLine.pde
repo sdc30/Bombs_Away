@@ -28,5 +28,7 @@ class gunLine {
     p4 = constrain(p4, 0, 1000);
 
     line(p1, p2, p3, p4);
+    strokeWeight(0);
+    stroke(0);
   }
 }

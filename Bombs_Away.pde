@@ -159,20 +159,30 @@ void imgUpdate() {
   for (Plane plane : planes) { 
 
     if (plane.id % 2 == 0) {
-      image(p1, plane.x_pos = l.movement(plane.x_pos, plane.x_pos+plane.speed), plane.y_pos);
-      if (plane.dropY <= height) {
+      image(p1, plane.x_pos = plane.x_pos+plane.speed, plane.y_pos);
+      if (plane.dropY <= height && plane.delay == 0) {
         plane.dropY = plane.dropBomb(plane.x_pos-plane.speed*plane.count, plane.count);
         plane.count++;
-      } else 
+      } else if (plane.dropY > height && plane.delay == 0){
+        plane.delayReset();
+      } else {
+      plane.delay--; 
       plane.countReset();
+      plane.x_pos = l.movement(plane.x_pos, plane.x_pos+plane.speed);
+      }
     }
     if (plane.id % 2 == 1) {
-      image(p2, plane.x_pos = l.movement(plane.x_pos, plane.x_pos-plane.speed), plane.y_pos);
+      image(p2, plane.x_pos = plane.x_pos-plane.speed, plane.y_pos);
       if (plane.dropY <= height) {
         plane.dropY = plane.dropBomb(plane.x_pos+plane.speed*plane.count, plane.count);
         plane.count++;
-      } else 
+      } else if (plane.dropY > height && plane.delay == 0){
+        plane.delayReset();
+      } else {
+      plane.delay--; 
       plane.countReset();
+      plane.x_pos = l.movement(plane.x_pos, plane.x_pos-plane.speed);
+      }
     }  
 
 
@@ -264,4 +274,5 @@ void drawScore() {
   fill(0);
   text("Tank 1: " + tank1.score, 100, 950);
   text("Tank 2: " + tank2.score, 900, 950);
+  text("TIME LEFT: " + interval, (width-100)/2, 20);
 }

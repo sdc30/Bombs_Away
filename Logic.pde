@@ -58,7 +58,7 @@ static class Logic {
     //System.out.println("" + p.x_pos + " : " + p.y_pos + " : " + b.bmb_X.get(i)+ " : " + -b.bmb_Y.get(i) );
     //System.out.println("" + dist(p.x_pos, p.y_pos, b.bmb_X.get(i), -b.bmb_Y.get(i)) );
    int j = 0;
-   
+  /* 
    float circX = abs(b.bmb_X.get(i) - p.x_pos - p.imgW/2);
    float circY = abs(b.bmb_Y.get(i) - p.y_pos - p.imgH/2);
     
@@ -66,16 +66,16 @@ static class Logic {
    else if (circX <= p.imgW/2 || circY <= p.imgH/2) j = 1;
    
    float corner = dist(circX, circY, p.imgW/2, p.imgH/2);
-   
-    /*
+   */
+    
     if(b.bmb_X.get(i) >= p.x_pos && b.bmb_X.get(i) <= (p.x_pos + p.imgW)) {
       if(-b.bmb_Y.get(i) >= p.y_pos && -b.bmb_Y.get(i) <= (p.y_pos + p.imgH)) {
           //System.out.println("" + dist(b.bmb_X.get(i), -b.bmb_Y.get(i), p.x_pos, p.y_pos));
         j = 1;
       }
-    }*/
+    }
     
-    if(corner <= b.radius*b.radius) j = 1;
+    //if(corner <= b.radius*b.radius) j = 1;
     
     return j;
   }

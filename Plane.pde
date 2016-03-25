@@ -1,5 +1,5 @@
 class Plane {
-  int health, x_pos, y_pos, bombCount, arc, speed, imgW, imgH, id, count, dropX, dropY;
+  int health, x_pos, y_pos, bombCount, arc, speed, imgW, imgH, id, count, dropX, dropY, delay;
   Bomb b = new Bomb(25, 15, 2, 5, 10, 120);
 
   public Plane(int x, int y, int bombs, int spd, int w, int h, int id_) {
@@ -12,6 +12,7 @@ class Plane {
     imgH = h;
     id = id_;
     count = 0;
+    delay = 15;
   }
 
   public void position(int x, int y) {
@@ -29,10 +30,16 @@ class Plane {
   
   public void countReset() {
     count = 0;
+    dropY = 0;
   }
   
   public void setDropX(int x) {
     
     dropX = x;
+  }
+  
+  public void delayReset() {
+    
+    delay = (int)random(50, 500);
   }
 }
