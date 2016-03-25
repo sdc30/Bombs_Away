@@ -1,5 +1,5 @@
 class Bomb {
-  int x_pos, y_pos, damage, radius, range, fuseTime, time, endX, endY, speed, count, 
+  int x_pos, y_pos, damage, radius, range, fuseTime, time, endX, endY, speed, count, diameter, 
     bmb_XSZ, bmb_YSZ;
   //float  h_dis, v_dis;
   ArrayList<Float> bmb_X = new ArrayList<Float>();
@@ -8,6 +8,7 @@ class Bomb {
   public Bomb(int dmg, int rd, int rg, int ft, int tm, int spd) {
     damage = dmg;
     radius = rd;
+    diameter = 2*radius;
     range = rg;
     fuseTime = ft;
 
@@ -31,7 +32,7 @@ class Bomb {
     ellipseMode(CENTER);
     fill(0);
 
-    ellipse(x, y, radius, radius);
+    ellipse(x, y, diameter, diameter);
   }
 
   public void addXY(float x, float y) {

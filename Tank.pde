@@ -14,7 +14,7 @@ class Tank {
     speed = spd;
     line_x = x_pos = x;
     line_y = y_pos = y;
-    gl = new gunLine(x_pos+imgW, y_pos+imgH, x_pos+imgW, y_pos+imgH);
+    gl = new gunLine(0, 0, 0, 0);
     bl = new ArrayList<Bomb>();
     tankTime = 0;
   }
@@ -35,7 +35,7 @@ class Tank {
     }
   }
 
-
+  
   public void timeReset() {
 
     tankTime = 0;
@@ -52,6 +52,6 @@ class Tank {
 
   public void hit() {
 
-    score++;
+    score += 1;
   }
 }

@@ -7,36 +7,41 @@ Tank tank1, tank2;
 Timer timer = new Timer();
 static int interval = 100, delay = 1000, period = 1000;
 
-
-PImage t1, t2, p, bg;
+PFont f1, f2;
+PImage t1, t2, p1, p2, bg;
 Logic l;
 
 Bomb b;
 Bomb bmb;
-int tankCounter = 0;
+int tankCounter = 0, c = 0;
 void setup() {
+  //f1 = createFont("Arial", 16, true);
+  f2 = createFont("Arial", 36, true);
   t1 = loadImage("tank1.gif");
   t2 = loadImage("tank2.gif");
-  p = loadImage("jet1.gif");
+  p1 = loadImage("jet1.gif");
+  p2 = loadImage("jet2.gif");
   bg = loadImage("back.jpg");
   size(1000, 1000);
   l = new Logic(1000, 1000);
-  for (int i = 0; i < 3; i++) {
-    planes.add(new Plane(getRand1(), getRand1(), 3, rand(), t1.width/2, t1.height/2, i));
+  for (int i = 0; i < 4; i++) {
+    planes.add(new Plane(getRand1(), getRand1(), 3, rand(), t1.width, t1.height, i));
   }
 
   tank1 = new Tank(100, 750, 3, 3);
   tank1.setBounds(-50, 350);
-  tank1.imgW = t1.width/2;
-  tank1.imgH = t1.height/2;
+  tank1.imgW = t1.width;
+  tank1.imgH = t1.height;
+  tank1.setGunLine(tank1.x_pos+(tank1.imgW/2), tank1.y_pos+(tank1.imgH/2), tank1.x_pos+(tank1.imgW/2), tank1.y_pos+(tank1.imgH/2));
 
   tank2 = new Tank(750, 750, 3, 1);
   tank2.setBounds(550, 900);
-  tank2.imgW = t2.width/2;
-  tank2.imgH = t2.height/2;
+  tank2.imgW = t2.width;
+  tank2.imgH = t2.height;
+  tank2.setGunLine(tank2.x_pos+(tank2.imgH/2), tank2.y_pos+(tank2.imgH/2), tank2.x_pos+(tank2.imgH/2), tank2.y_pos+(tank2.imgH/2));
 
   for (int i = 0; i < 10; i++) {
-    tank1.bl.add(new Bomb(25, 25, 2, 5, 10, 120));
+    tank1.bl.add(new Bomb(25, 15, 2, 5, 10, 120));
   } 
 
   for (int i = 0; i < 10; i++) {
@@ -61,7 +66,7 @@ void draw() {
   //check();
   if (tank1.fired) {
     pushMatrix();
-    translate(tank1.x_pos+tank1.imgW, tank1.y_pos+tank1.imgH);
+    translate(tank1.x_pos+tank1.imgW/2, tank1.y_pos+tank1.imgH/2);
     if (tank1.tankTime <= tank1.currentBomb.time && tankCounter < tank1.currentBomb.bmb_X.size()) {
 
       tank1.currentBomb.drawB(tank1.currentBomb.bmb_X.get(tankCounter), tank1.currentBomb.bmb_Y.get(tankCounter));
@@ -86,6 +91,7 @@ void keyPressed(KeyEvent e) {
       break;
     case DOWN: 
       if (tank1.bl.size() > 0) { 
+        c += 1;
         bmb = tank1.bl.get(tank1.bl.size()-1);
         bmb.usedBomb(tank1);
 
@@ -105,7 +111,6 @@ void keyPressed(KeyEvent e) {
         tank1.currentBomb = bmb;
         tank1.negateFire();
         planeHit(tank1);
-        
       }
       break;
     case LEFT: 
@@ -118,24 +123,24 @@ void keyPressed(KeyEvent e) {
       l.tankBounds(tank1, 1); 
       break;
     } else if (key == 'w') {
-    tank1.setGunLine(tank1.x_pos + tank1.imgW, 
-      tank1.y_pos + tank1.imgH, 
+    tank1.setGunLine(tank1.x_pos + tank1.imgW/2, 
+      tank1.y_pos + tank1.imgH/2, 
       tank1.line_x, 
-      tank1.line_y = tank1.line_y-=50);
+      tank1.line_y = tank1.line_y-50);
   } else if (key == 's') {
-    tank1.setGunLine(tank1.x_pos + tank1.imgW, 
-      tank1.y_pos + tank1.imgH, 
+    tank1.setGunLine(tank1.x_pos + tank1.imgW/2, 
+      tank1.y_pos + tank1.imgH/2, 
       tank1.line_x, 
-      tank1.line_y = tank1.line_y+=50);
+      tank1.line_y = tank1.line_y+50);
   } else if (key == 'a') {
-    tank1.setGunLine(tank1.x_pos + tank1.imgW, 
-      tank1.y_pos + tank1.imgH, 
-      (tank1.line_x = tank1.line_x-=50), 
+    tank1.setGunLine(tank1.x_pos + tank1.imgW/2, 
+      tank1.y_pos + tank1.imgH/2, 
+      (tank1.line_x = tank1.line_x-50), 
       tank1.line_y);
   } else if (key == 'd') {
-    tank1.setGunLine(tank1.x_pos + tank1.imgW, 
-      tank1.y_pos + tank1.imgH, 
-      (tank1.line_x = tank1.line_x+=50), 
+    tank1.setGunLine(tank1.x_pos + tank1.imgW/2, 
+      tank1.y_pos + tank1.imgH/2, 
+      (tank1.line_x = tank1.line_x+50), 
       tank1.line_y);
   } else if (key == '1') {
     l.p1Line = !l.p1Line;
@@ -152,8 +157,29 @@ void imgUpdate() {
   if (l.p2Line)
     tank2.gl.drawL();
   for (Plane plane : planes) { 
-    image(p, plane.x_pos = l.movement(plane.x_pos, plane.x_pos+plane.speed), plane.y_pos);
+
+    if (plane.id % 2 == 0) {
+      image(p1, plane.x_pos = l.movement(plane.x_pos, plane.x_pos+plane.speed), plane.y_pos);
+      if (plane.dropY <= height) {
+        plane.dropY = plane.dropBomb(plane.x_pos-plane.speed*plane.count, plane.count);
+        plane.count++;
+      } else 
+      plane.countReset();
+    }
+    if (plane.id % 2 == 1) {
+      image(p2, plane.x_pos = l.movement(plane.x_pos, plane.x_pos-plane.speed), plane.y_pos);
+      if (plane.dropY <= height) {
+        plane.dropY = plane.dropBomb(plane.x_pos+plane.speed*plane.count, plane.count);
+        plane.count++;
+      } else 
+      plane.countReset();
+    }  
+
+
+    fill(0);
+    text("" + plane.id, plane.x_pos + plane.imgW, plane.y_pos + plane.imgH);
   }
+  drawScore();
 }
 
 int getRand1() {
@@ -203,18 +229,19 @@ void mouseAction() {
 }
 
 void planeHit(Tank t) {
-
+  boolean breakOut = false;
   for (Plane plane : planes) {
+    if (breakOut) break;
     for (int i = 0; i < t.count; i++) {
-
+      if (breakOut) break;
       if (l.collision(plane, t.currentBomb, i) == 1) {
 
         t.hit();
-        break;
+        breakOut = !breakOut;
       }
     }
   } 
-  System.out.println("" + t.score);
+  System.out.println("" + c);
   t.countReset();
 }
 
@@ -229,5 +256,12 @@ void mouseWheel(MouseEvent e) {
 
 void mousePressed() {
 
-  //System.out.println( "pointer x: " + mouseX + " y: " + mouseY);
+  System.out.println( "pointer x: " + mouseX + " y: " + mouseY);
+}
+
+void drawScore() {
+
+  fill(0);
+  text("Tank 1: " + tank1.score, 100, 950);
+  text("Tank 2: " + tank2.score, 900, 950);
 }
