@@ -1,5 +1,5 @@
 class gunLine {
-  public volatile int p1, p2, p3, p4;
+  public int p1, p2, p3, p4;
 
   public gunLine(int x1, int y1, int x2, int y2) {
     p1 = x1;

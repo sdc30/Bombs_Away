@@ -2,6 +2,7 @@ class Tank {
   int health, x_pos, y_pos, bombCount, arc, score, speed, bound_left, bound_right, line_x, line_y, 
     imgW, imgH, tankTime, count;
   gunLine gl;
+  healthBar hb;
   ArrayList<Bomb> bl;
 
   boolean fired = false;
@@ -17,6 +18,8 @@ class Tank {
     gl = new gunLine(0, 0, 0, 0);
     bl = new ArrayList<Bomb>();
     tankTime = 0;
+
+    hb = new healthBar(x, y+imgH+5, x+imgW, y+imgH+5, 1);
   }
 
   public void setBounds(int left, int right) {
@@ -35,7 +38,7 @@ class Tank {
     }
   }
 
-  
+
   public void timeReset() {
 
     tankTime = 0;
