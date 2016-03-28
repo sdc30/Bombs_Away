@@ -52,7 +52,7 @@ class healthBar {
       stroke(0);
       break;
     }
-    System.out.println("p1 " + p1 + " p2 " + p2);
+    //System.out.println("p1 " + p1 + " p2 " + p2);
     line(p1, p2, p3, p4);
 
     strokeWeight(0);

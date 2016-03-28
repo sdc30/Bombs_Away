@@ -1,8 +1,9 @@
 class Plane {
   volatile int health, x_pos, y_pos, bombCount, arc, speed, imgW, imgH, id, count, dropX, dropY, delay;
   volatile boolean alive;
-  Bomb b = new Bomb(25, 15, 2, 5, 10, 120);
+  Bomb currentBomb = new Bomb(25, 15, 2, 5, 10, 120);
   healthBar hb;
+  
 
   public Plane(int x, int y, int bombs, int spd, int w, int h, int id_) {
     health = 100;
@@ -24,11 +25,12 @@ class Plane {
     y_pos = y;
   }
 
-  public int dropBomb(int x, int y) {
-
+  public int dropBomb(int x, int y, int id) {
+    setDropX(x);
     y += y_pos + imgH/2;
-
-    b.drawB(x, y);
+    currentBomb.position(x, y);
+    currentBomb.setID(id);
+    currentBomb.drawB(x, y);
     return y;
   }
 
@@ -38,7 +40,6 @@ class Plane {
   }
 
   public void setDropX(int x) {
-
     dropX = x;
   }
 
@@ -49,7 +50,7 @@ class Plane {
 
 
   public boolean hit() {
-
+    
     return true;
   }
 }

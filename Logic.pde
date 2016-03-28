@@ -81,32 +81,34 @@ static class Logic {
   }
 
 
-  //public boolean collision(Tank t, Bomb b) {
-  //  System.out.println("collision p id " + p.id);
-  //  boolean hit = false;
+  public boolean collision(int x, int y, Tank t) {
+   boolean hit = false;
 
 
-  //  if (b.bmb_X.get(i) >= p.x_pos && b.bmb_X.get(i) <= (p.x_pos + p.imgW)) {
-  //    if (b.bmb_Y.get(i) >= p.y_pos && b.bmb_Y.get(i) <= (p.y_pos + p.imgH)) {
+   if (x >= t.x_pos && x <= (t.x_pos + t.imgW)) {
+     if (y >= t.y_pos && x <= (t.y_pos + t.imgH)) {
 
+       hit = true;
+     }
+   }
 
-  //      hit = true;
-  //    }
-  //  }
-
-  //  return hit;
-  //}
+   return hit;
+  }
 
 
   public void planeDropBomb(Plane p) {
   }
 
 
-  //void tankHit(Plane p, Tank t) {
-
-  //  if(collision(p, 
-
-  //}
+  boolean tankHit(Bomb b, Tank t) {
+   boolean hit = false;
+   if(collision(b.x_pos, b.y_pos, t) && t.hitBy != b.id) {
+     t.health -= 25;
+     t.hitBy = b.id;
+     hit = true; 
+   }
+    return hit;
+  }
 
 
   boolean planeHit(Plane p, Tank t) {
@@ -118,7 +120,7 @@ static class Logic {
       if (collision(p, t.currentBomb, i) && !hit) {
         p.health -= t.currentBomb.damage;
         if (p.health <= 0) { 
-           t.hit(); 
+           t.scored(); 
            p.alive = false;
         }
         hit = true;

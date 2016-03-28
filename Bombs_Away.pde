@@ -5,21 +5,20 @@ ArrayList<Plane> planes = new ArrayList<Plane>(1);
 Tank tank1, tank2;
 
 Timer timer = new Timer();
-static int interval = 100, delay = 1000, period = 1000;
+static int interval = 120, delay = 1000, period = 1000, bombDelay = 20;
 
 final int game = 0, pause = 1, gameOver = 2;
-volatile int state = pause, tank1posX, tank2posX, tank1posY, tank2posY;
+volatile int state = pause, tank1posX, tank2posX, tank1posY, tank2posY, planeCount;
 
 PFont f1, f2;
 PImage t1, t2, p1, p2, bg, pbg;
 Logic l;
 
-Bomb b;
-Bomb bmb;
-int tankCounter = 0, c = 0;
+Bomb b, bmb, b_2;
+int tankCounter = 0, bombCount = 10;
 void setup() {
   //f1 = createFont("Arial", 16, true);
-  f2 = createFont("Arial", 36, true);
+  f2 = createFont("Impact", 24, true);
   t1 = loadImage("tank1.gif");
   t2 = loadImage("tank2.gif");
   p1 = loadImage("jet1.gif");
@@ -28,29 +27,23 @@ void setup() {
   bg = loadImage("back.jpg");
   size(1000, 1000);
   l = new Logic(1000, 1000);
-  for (int i = 0; i < 4; i++) {
-    planes.add(new Plane(getRand1(), getRand1(), 3, rand(), p1.width, p1.height, i));
-  }
+  b_2 = new Bomb(25, 5, 2, 5, 10, 120);
 
-  tank1 = new Tank(100, 750, 3, 3);
+
+  tank1 = new Tank(100, 750, 10, 3);
   tank1.setBounds(-50, 350);
   tank1.imgW = t1.width;
   tank1.imgH = t1.height;
   tank1.setGunLine(tank1.x_pos+(tank1.imgW/2), tank1.y_pos+(tank1.imgH/2), tank1.x_pos+(tank1.imgW/2), tank1.y_pos+(tank1.imgH/2));
 
-  tank2 = new Tank(750, 750, 3, 1);
+  tank2 = new Tank(750, 750, 10, 1);
   tank2.setBounds(550, 900);
   tank2.imgW = t2.width;
   tank2.imgH = t2.height;
   tank2.setGunLine(tank2.x_pos+(tank2.imgH/2), tank2.y_pos+(tank2.imgH/2), tank2.x_pos+(tank2.imgH/2), tank2.y_pos+(tank2.imgH/2));
 
-  for (int i = 0; i < 10; i++) {
-    tank1.bl.add(new Bomb(25, 5, 2, 5, 10, 120));
-  } 
-
-  for (int i = 0; i < 10; i++) {
-    tank2.bl.add(new Bomb(25, 5, 2, 5, 10, 120));
-  }
+  loadBombs();
+  loadPlanes();
 
   timer.scheduleAtFixedRate(new TimerTask() {
     public void run() {
@@ -68,7 +61,14 @@ void draw() {
   tank2posX = tank2.x_pos + tank2.imgW;
   tank1posY = tank1.y_pos + tank1.imgH; 
   tank2posY = tank2.y_pos + tank2.imgH;
+  if (planeCount == 0) loadPlanes();
+  if (interval % 10 == 0) {
 
+    b_2.resetBombs(tank1, bombCount);
+    b_2.resetBombs(tank2, bombCount);
+
+    loadBombs();
+  }
 
 
   switch (state) {
@@ -90,6 +90,8 @@ void draw() {
       }
     } else if (tank2.fired) {
     }
+    
+
     break;
   case pause: 
     background(pbg);
@@ -107,16 +109,16 @@ void keyPressed(KeyEvent e) {
 
     case UP: 
 
+
       break;
     case DOWN: 
       if (tank1.bl.size() > 0) { 
-        //c += 1;
+
         bmb = tank1.bl.get(tank1.bl.size()-1);
         bmb.usedBomb(tank1);
-
+        tank1.bombCount--;
 
         float angle1 = atan2(tank1.gl.p4 - tank1.gl.p2, tank1.gl.p3 - tank1.gl.p1);
-        // System.out.println("" + tank1.gl.p1 + " : " + tank1.gl.p2 + " : " + tank1.gl.p3 + " : " + tank1.gl.p4 );
         float t = 0;
 
 
@@ -193,8 +195,10 @@ void imgUpdate() {
 
   try {
     for (Plane plane : planes)
-      if (!plane.alive)
+      if (!plane.alive) {
         planes.remove(plane);
+        planeCount--;
+      }
   } 
   catch(Exception e) {
   }
@@ -202,7 +206,7 @@ void imgUpdate() {
 
   // cycle through and draw planes 
   for (Plane plane : planes) { 
-
+    
     if (plane.alive) {
       plane.hb.setPoints(plane.x_pos, plane.y_pos+plane.imgH+5, plane.x_pos+plane.imgW, plane.y_pos+plane.imgH+5);
       //System.out.println("p id/p health " + plane.id + " " + plane.health);
@@ -210,10 +214,14 @@ void imgUpdate() {
       if (plane.id % 2 == 0) {
         image(p1, plane.x_pos = plane.x_pos+plane.speed, plane.y_pos);
         if (plane.dropY <= height && plane.delay == 0) {
-          plane.dropY = plane.dropBomb(plane.x_pos-plane.speed*plane.count, plane.count);
+          plane.dropY = plane.dropBomb(plane.x_pos-plane.speed*plane.count, plane.count, plane.currentBomb.id);
+          l.tankHit(plane.currentBomb, tank1); 
+          l.tankHit(plane.currentBomb, tank2);
+          
           plane.count++;
         } else if (plane.dropY > height && plane.delay == 0) {
           plane.delayReset();
+          plane.currentBomb.setID(getRand1());
         } else {
           plane.delay--; 
           plane.countReset();
@@ -222,21 +230,30 @@ void imgUpdate() {
       }
       if (plane.id % 2 == 1) {
         image(p2, plane.x_pos = plane.x_pos-plane.speed, plane.y_pos);
-        if (plane.dropY <= height) {
-          plane.dropY = plane.dropBomb(plane.x_pos+plane.speed*plane.count, plane.count);
+        if (plane.dropY <= height && plane.delay == 0) {
+          plane.dropY = plane.dropBomb(plane.x_pos+plane.speed*plane.count, plane.count, plane.currentBomb.id);
+          l.tankHit(plane.currentBomb, tank1); 
+          l.tankHit(plane.currentBomb, tank2);
+          
           plane.count++;
         } else if (plane.dropY > height && plane.delay == 0) {
           plane.delayReset();
+          plane.currentBomb.setID(getRand1());
         } else {
           plane.delay--; 
           plane.countReset();
           plane.x_pos = l.movement(plane.x_pos, plane.x_pos-plane.speed);
         }
       }
+
+
       fill(0);
       text("" + plane.id, plane.x_pos+plane.imgW, plane.y_pos+plane.imgH);
     }
+
+
   }
+   
   drawScore();
 }
 
@@ -300,10 +317,31 @@ void mousePressed() {
   System.out.println( "pointer x: " + mouseX + " y: " + mouseY);
 }
 
+void loadBombs() {
+
+  for (int i = 0; i < tank1.bombCount; i++) {
+    tank1.bl.add(new Bomb(25, 5, 2, 5, 10, 120));
+  } 
+
+  for (int i = 0; i < tank2.bombCount; i++) {
+    tank2.bl.add(new Bomb(25, 5, 2, 5, 10, 120));
+  }
+}
+
+void loadPlanes() {
+  planeCount = rand();
+  for (int i = 0; i < planeCount; i++) {
+    planes.add(new Plane(getRand1(), getRand1(), 3, rand(), p1.width, p1.height, i));
+  }
+}
+
 void drawScore() {
 
-  fill(0);
-  text("Tank 1: " + tank1.score, 100, 950);
-  text("Tank 2: " + tank2.score, 900, 950);
+  fill(255, 0, 0);
+  textFont(f2);
+  text("Tank 1: " + tank1.score, 10, 950);
+  text("Bombs Left: " + tank1.bombCount, 10, 980);
+  text("Tank 2: " + tank2.score, 800, 950);
+  text("Bombs Left: " + tank2.bombCount, 800, 980);
   text("TIME LEFT: " + interval, (width-100)/2, 20);
 }

@@ -1,11 +1,11 @@
 class Tank {
   int health, x_pos, y_pos, bombCount, arc, score, speed, bound_left, bound_right, line_x, line_y, 
-    imgW, imgH, tankTime, count;
+    imgW, imgH, tankTime, count, hitBy;
   gunLine gl;
   healthBar hb;
   ArrayList<Bomb> bl;
 
-  boolean fired = false;
+  boolean fired = false, hit = false;
   Bomb currentBomb;
 
   public Tank(int x, int y, int bombs, int spd) {
@@ -18,7 +18,7 @@ class Tank {
     gl = new gunLine(0, 0, 0, 0);
     bl = new ArrayList<Bomb>();
     tankTime = 0;
-
+    hitBy = -1;
     hb = new healthBar(x, y+imgH+5, x+imgW, y+imgH+5, 1);
   }
 
@@ -35,6 +35,11 @@ class Tank {
   public void fire(int x, int y) {
     if (bl.size()-1 > 0) {
       Bomb b = bl.get(bl.size()-1);
+      try {
+       bl.remove(bl.size()-1);
+      } 
+      catch(Exception e) {
+      }
     }
   }
 
@@ -53,8 +58,18 @@ class Tank {
     fired = !fired;
   }
 
-  public void hit() {
+  public void scored() {
 
     score += 1;
   }
+  
+  public void loadBombs(Bomb b) {
+    
+    bl.add(b);
+  }
+  
+  public void isHit() {
+   hit = !hit; 
+  }
+
 }

@@ -1,6 +1,6 @@
 class Bomb {
   int x_pos, y_pos, damage, radius, range, fuseTime, time, endX, endY, speed, count, diameter, 
-    bmb_XSZ, bmb_YSZ;
+    bmb_XSZ, bmb_YSZ, id;
   //float  h_dis, v_dis;
   ArrayList<Float> bmb_X = new ArrayList<Float>();
   ArrayList<Float> bmb_Y = new ArrayList<Float>();
@@ -47,5 +47,13 @@ class Bomb {
   public void usedBomb(Tank t) {
 
     t.bl.remove(t.bl.size()-1);
+  }
+  
+  public void resetBombs(Tank t, int bombs) {
+    t.bombCount = bombs;
+  }
+  
+  public void setID(int i) { 
+    id = i;
   }
 }
