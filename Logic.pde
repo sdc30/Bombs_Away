@@ -102,6 +102,7 @@ static class Logic {
 
   boolean tankHit(Bomb b, Tank t) {
    boolean hit = false;
+   System.out.println("hitby : " + t.hitBy + " id " + b.id);
    if(collision(b.x_pos, b.y_pos, t) && t.hitBy != b.id) {
      t.health -= 25;
      t.hitBy = b.id;

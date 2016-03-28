@@ -18,7 +18,7 @@ class Tank {
     gl = new gunLine(0, 0, 0, 0);
     bl = new ArrayList<Bomb>();
     tankTime = 0;
-    hitBy = -1;
+    hitBy = -99;
     hb = new healthBar(x, y+imgH+5, x+imgW, y+imgH+5, 1);
   }
 

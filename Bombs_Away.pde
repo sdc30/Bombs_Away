@@ -47,8 +47,10 @@ void setup() {
 
   timer.scheduleAtFixedRate(new TimerTask() {
     public void run() {
-      if (interval == 1) timer.cancel();
-      else --interval;
+      if (interval == 0) {
+        timer.cancel();
+        state = gameOver;
+      } else --interval;
       //System.out.println("" + interval);
     }
   }
@@ -69,7 +71,7 @@ void draw() {
 
     loadBombs();
   }
-
+  if (tank1.health <= 0 || tank2.health <= 0) state = gameOver;
 
   switch (state) {
 
@@ -90,13 +92,24 @@ void draw() {
       }
     } else if (tank2.fired) {
     }
-    
+
 
     break;
   case pause: 
     background(pbg);
     break;
   case gameOver:
+    background(255);
+    text("Tank 1 Score: " + tank1.score, width/2, height/2);
+    text("Tank 2 Score: " + tank2.score, width/2, height/2+20);
+    if (interval == 0 && tank1.score > tank2.score) 
+      text("You Won!! Well...Player 1 actually won", width/2, height/2+40);
+    else if (interval == 0 && tank1.score < tank2.score)
+      text("You Won!! Well...Player 2 actually won", width/2, height/2+40);
+    else if (interval == 0 && tank1.score < tank2.score)
+      text("You Won!! Well...No one actually won..", width/2, height/2+40);
+    else if (tank1.health <= 0 || tank2.health <= 0) 
+      text("You Died!! Nooooo..Oh well.. next time, champ: ", width/2, height/2+40);
     break;
   default :
   }
@@ -206,7 +219,7 @@ void imgUpdate() {
 
   // cycle through and draw planes 
   for (Plane plane : planes) { 
-    
+
     if (plane.alive) {
       plane.hb.setPoints(plane.x_pos, plane.y_pos+plane.imgH+5, plane.x_pos+plane.imgW, plane.y_pos+plane.imgH+5);
       //System.out.println("p id/p health " + plane.id + " " + plane.health);
@@ -217,11 +230,11 @@ void imgUpdate() {
           plane.dropY = plane.dropBomb(plane.x_pos-plane.speed*plane.count, plane.count, plane.currentBomb.id);
           l.tankHit(plane.currentBomb, tank1); 
           l.tankHit(plane.currentBomb, tank2);
-          
+
           plane.count++;
         } else if (plane.dropY > height && plane.delay == 0) {
           plane.delayReset();
-          plane.currentBomb.setID(getRand1());
+          plane.currentBomb.setID((int)random(0, 100000));
         } else {
           plane.delay--; 
           plane.countReset();
@@ -234,11 +247,11 @@ void imgUpdate() {
           plane.dropY = plane.dropBomb(plane.x_pos+plane.speed*plane.count, plane.count, plane.currentBomb.id);
           l.tankHit(plane.currentBomb, tank1); 
           l.tankHit(plane.currentBomb, tank2);
-          
+
           plane.count++;
         } else if (plane.dropY > height && plane.delay == 0) {
           plane.delayReset();
-          plane.currentBomb.setID(getRand1());
+          plane.currentBomb.setID((int)random(0, 100000));
         } else {
           plane.delay--; 
           plane.countReset();
@@ -250,10 +263,8 @@ void imgUpdate() {
       fill(0);
       text("" + plane.id, plane.x_pos+plane.imgW, plane.y_pos+plane.imgH);
     }
-
-
   }
-   
+
   drawScore();
 }
 
