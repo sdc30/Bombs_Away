@@ -11,7 +11,7 @@ class healthBar {
     p4 = y2;
     colour = c;
     green = color(0, 255, 0);
-    yellow = color(0, 255, 255);
+    yellow = color(255, 255, 0);
     red = color(255, 0, 0);
   }
 

@@ -191,13 +191,22 @@ void imgUpdate() {
   if (l.p2Line)
     tank2.gl.drawL();
 
-  // cycle through and draw planes   
+  try {
+    for (Plane plane : planes)
+      if (!plane.alive)
+        planes.remove(plane);
+  } 
+  catch(Exception e) {
+  }
+
+
+  // cycle through and draw planes 
   for (Plane plane : planes) { 
 
-    if (plane.health > 0) {
-    plane.hb.setPoints(plane.x_pos, plane.y_pos+plane.imgH+5, plane.x_pos+plane.imgW, plane.y_pos+plane.imgH+5);
-    //System.out.println("p id/p health " + plane.id + " " + plane.health);
-    plane.hb.drawHealthBar(plane.health/25);
+    if (plane.alive) {
+      plane.hb.setPoints(plane.x_pos, plane.y_pos+plane.imgH+5, plane.x_pos+plane.imgW, plane.y_pos+plane.imgH+5);
+      //System.out.println("p id/p health " + plane.id + " " + plane.health);
+      plane.hb.drawHealthBar(plane.health/25);
       if (plane.id % 2 == 0) {
         image(p1, plane.x_pos = plane.x_pos+plane.speed, plane.y_pos);
         if (plane.dropY <= height && plane.delay == 0) {
@@ -224,12 +233,9 @@ void imgUpdate() {
           plane.x_pos = l.movement(plane.x_pos, plane.x_pos-plane.speed);
         }
       }
-    fill(0);
-    text("" + plane.id, plane.x_pos+plane.imgW, plane.y_pos+plane.imgH);
+      fill(0);
+      text("" + plane.id, plane.x_pos+plane.imgW, plane.y_pos+plane.imgH);
     }
-    else 
-
-
   }
   drawScore();
 }

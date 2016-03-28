@@ -3,7 +3,7 @@ static class Logic {
   public static float gravity = 9.8;
   public static volatile boolean gameOver = false;
   boolean isPaused = true;
-  boolean p1Line = false, p2Line = false;
+  boolean p1Line = true, p2Line = true;
 
   public Logic(int w, int h) {
     wd = w;
@@ -117,7 +117,10 @@ static class Logic {
       //System.out.println("planeHit Loop at " + i);
       if (collision(p, t.currentBomb, i) && !hit) {
         p.health -= t.currentBomb.damage;
-        if (p.health <= 0) t.hit();
+        if (p.health <= 0) { 
+           t.hit(); 
+           p.alive = false;
+        }
         hit = true;
       }
     }

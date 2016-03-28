@@ -1,5 +1,6 @@
 class Plane {
   volatile int health, x_pos, y_pos, bombCount, arc, speed, imgW, imgH, id, count, dropX, dropY, delay;
+  volatile boolean alive;
   Bomb b = new Bomb(25, 15, 2, 5, 10, 120);
   healthBar hb;
 
@@ -14,7 +15,7 @@ class Plane {
     id = id_;
     count = 0;
     delay = 15;
-
+    alive = true;
     hb = new healthBar(x, y+imgH+5, x+imgW, y+imgH+5, 1);
   }
 
