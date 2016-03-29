@@ -83,11 +83,12 @@ static class Logic {
 
   public boolean collision(int x, int y, Tank t) {
    boolean hit = false;
+   int w = t.x_pos + t.imgW;
+   int h = t.y_pos + t.imgH;
 
-
-   if (x >= t.x_pos && x <= (t.x_pos + t.imgW)) {
-     if (y >= t.y_pos && x <= (t.y_pos + t.imgH)) {
-
+   if (x >= t.x_pos && x <= w) {
+     if (y >= t.y_pos && y <= h) {
+          System.out.format("\nx: %d, y: %d, tankx: %d, tanky: %d, tankxw: %d, tankyh: %d\n", x, y, t.x_pos, t.y_pos, w, h);
        hit = true;
      }
    }
@@ -102,8 +103,9 @@ static class Logic {
 
   boolean tankHit(Bomb b, Tank t) {
    boolean hit = false;
-   System.out.println("hitby : " + t.hitBy + " id " + b.id);
+   
    if(collision(b.x_pos, b.y_pos, t) && t.hitBy != b.id) {
+     //System.out.println("hitby : " + t.hitBy + " id " + b.id);
      t.health -= 25;
      t.hitBy = b.id;
      hit = true; 
