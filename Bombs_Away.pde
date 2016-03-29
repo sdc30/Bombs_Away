@@ -24,19 +24,19 @@ void setup() {
   p1 = loadImage("jet1.gif");
   p2 = loadImage("jet2.gif");
   pbg = loadImage("pause.png");
-  bg = loadImage("back.jpg");
+  bg = loadImage("background.jpg");
   size(1000, 1000);
   l = new Logic(1000, 1000);
   b_2 = new Bomb(25, 5, 2, 5, 10, 120);
 
 
-  tank1 = new Tank(100, 750, 10, 3);
+  tank1 = new Tank(100, 650, 10, 3);
   tank1.setBounds(-50, 350);
   tank1.imgW = t1.width;
   tank1.imgH = t1.height;
   tank1.setGunLine(tank1.x_pos+(tank1.imgW/2), tank1.y_pos+(tank1.imgH/2), tank1.x_pos+(tank1.imgW/2), tank1.y_pos+(tank1.imgH/2));
 
-  tank2 = new Tank(750, 750, 10, 1);
+  tank2 = new Tank(750, 650, 10, 1);
   tank2.setBounds(550, 900);
   tank2.imgW = t2.width;
   tank2.imgH = t2.height;
@@ -78,7 +78,7 @@ void draw() {
   case game:   
     background(bg);
     imgUpdate();
-    //check();
+    mouseAction();
     if (tank1.fired) {
 
       if (tank1.tankTime <= tank1.currentBomb.time && tankCounter < tank1.currentBomb.bmb_X.size()) {
@@ -91,6 +91,15 @@ void draw() {
         tank1.negateFire();
       }
     } else if (tank2.fired) {
+      if (tank2.tankTime <= tank2.currentBomb.time && tankCounter < tank2.currentBomb.bmb_X.size()) {
+
+        tank2.currentBomb.drawB(tank2.currentBomb.bmb_X.get(tankCounter), tank2.currentBomb.bmb_Y.get(tankCounter));
+        tankCounter++;
+      } else {
+        tankCounter = 0;
+        tank2.timeReset(); 
+        tank2.negateFire();
+      }
     }
 
 
@@ -270,7 +279,7 @@ void imgUpdate() {
 
 int getRand1() {
   // return random sizes
-  return (int) random(0, 600);
+  return (int) random(0, 300);
 }
 
 int rand() {
@@ -281,8 +290,8 @@ int rand() {
 void mouseAction() {
 
   if (mousePressed) {
-    tank2.setGunLine(tank2.x_pos + tank2.imgW, 
-      tank2.y_pos + tank2.imgH, 
+    tank2.setGunLine(tank2.x_pos + tank2.imgW/2, 
+      tank2.y_pos + tank2.imgH/2, 
       (tank2.line_x = mouseX), 
       (tank2.line_y = mouseY));
     switch(mouseButton) {
@@ -295,17 +304,49 @@ void mouseAction() {
       tank2.x_pos += tank2.speed;
       l.tankBounds(tank2, 1);
       break;
+    }
+  }
+}
+
+
+void mousePressed() {
+
+  if (mousePressed) {
+    tank2.setGunLine(tank2.x_pos + tank2.imgW/2, 
+      tank2.y_pos + tank2.imgH/2, 
+      (tank2.line_x = mouseX), 
+      (tank2.line_y = mouseY));
+    switch(mouseButton) {
+
     case CENTER: 
       l.p2Line = !l.p2Line;
-      Bomb b = tank1.bl.get(tank2.bl.size()-1);
+      if (tank2.bl.size() > 0) { 
 
-      float angle1 = atan2(tank2.gl.p4-tank2.gl.p2, tank2.gl.p3-tank2.gl.p1);
-      float t = 0;
+        bmb = tank2.bl.get(tank2.bl.size()-1);
+        bmb.usedBomb(tank2);
+        tank2.bombCount--;
 
-      do {
-        l.displacement(tank2, b, t+=.5, angle1);
-      } while (t <= b.time);
+        float angle1 = atan2(tank2.gl.p4 - tank2.gl.p2, tank2.gl.p3 - tank2.gl.p1);
+        float t = 0;
 
+
+        do {
+
+          l.displacement(tank2, bmb, t, angle1);
+          t +=.5;
+          tank2.count++;
+        } while (t <= bmb.time);
+
+        tank2.currentBomb = bmb;
+        tank2.negateFire();
+
+        for (Plane p : planes) {  
+
+          //System.out.println("" + p.id);
+          if (l.planeHit(p, tank2)) break;
+        }
+        tank2.countReset();
+      }
 
       break;
     }
@@ -323,10 +364,10 @@ void mouseAction() {
 //  }
 //}
 
-void mousePressed() {
+//void mousePressed() {
 
-  System.out.println( "pointer x: " + mouseX + " y: " + mouseY);
-}
+//  System.out.println( "pointer x: " + mouseX + " y: " + mouseY);
+//}
 
 void loadBombs() {
 
