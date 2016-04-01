@@ -142,7 +142,7 @@ static class Logic {
     if (collision(b.x_pos, b.y_pos, t)) {
 
       for (int i = 0; i < t.hitBy.size(); i++) {
-        System.out.format("previous hit: t.hitBy %d, bomb id: %d\n", t.hitBy.get(i), b.id);
+        //System.out.format("previous hit: t.hitBy %d, bomb id: %d\n", t.hitBy.get(i), b.id);
         if (t.hitBy.get(i) == b.id) {
           hit = true;
         }
