@@ -1,17 +1,44 @@
+/**********
+ Cartwright, Stephen D
+ Art 297A Stone
+ Bombs Away: Logic class - holds different information related to game logic 
+ 
+ 
+ *********/
+
+/*
+Variables 
+ - int wd, ht: screen width, height
+ - float gravity: acceleration of object due to gravity 
+ - volatile boolean gameOver: changes when game is over
+ - boolean p1Line, p2Line toggle gun lasers
+ */
+
 static class Logic {
   public static int wd, ht;
-  public static float gravity = 9.8;
-  public static volatile boolean gameOver = false;
-  boolean isPaused = true;
-  boolean p1Line = true, p2Line = true;
+  public static float gravity;
+  public static volatile boolean gameOver;
+  boolean isPaused;
+  boolean p1Line, p2Line;
 
   public Logic(int w, int h) {
     wd = w;
     ht = h;
+    gravity = 9.8;
+    gameOver = false;
+    isPaused = true;
+    p1Line = true;
+    p2Line = true;
   }
 
-  public int movement(int x, int x_next) {
 
+
+  public int movement(int x, int x_next) {
+    // we check the direction and movement of 
+    // the object (left or right) 
+
+    // if it's going to the left make sure it loops around on the opposite side of screen
+    // likewise with the right direction back to the left
     if (x >= x_next) { // left
       if (x <= 0) {
         x_next = wd;
@@ -28,7 +55,8 @@ static class Logic {
 
 
   public void tankBounds(Tank t, int i) {
-
+    // make sure we cant move outside our bounds
+    // int i made for easy toggle check left or right
     if (i == 1) { 
       if (t.x_pos >= t.bound_right)
         t.x_pos = t.bound_right;
@@ -40,6 +68,10 @@ static class Logic {
 
 
   public void displacement(Tank tank, Bomb b, float t, float angle) {
+    // calculates, using kinematics equations, the positions of
+    // the bomb at given time while adding to the list containing
+    // positions to be iterated over
+    // make the '(0, 0)' position the tank's cannon 
     float ax = 0, ay = gravity;
 
     float x0 = tank.x_pos + tank.imgW/2;
@@ -59,9 +91,11 @@ static class Logic {
 
 
   public boolean collision(Plane p, Bomb b, int i) {
-    //System.out.println("collision p id " + p.id);
+    // check to see if there is a collision between a plane and bomb
+    // using box based detection
     boolean hit = false;
-
+    int w = p.x_pos + p.imgW;
+    int h = p.y_pos + p.imgH;
     //if (p.id == 1) {
 
     //  System.out.println("\n bmb (x,y) " + b.bmb_X.get(i) + " : " + b.bmb_Y.get(i) );
@@ -69,10 +103,9 @@ static class Logic {
     //  System.out.println("\n (x, x+w, y, y+h) " + p.x_pos + " : " + (p.x_pos + p.imgW) + " : " + p.y_pos + " : " + (p.y_pos + p.imgH) );
     //}
 
-    if (b.bmb_X.get(i) >= p.x_pos && b.bmb_X.get(i) <= (p.x_pos + p.imgW)) {
-      if (b.bmb_Y.get(i) >= p.y_pos && b.bmb_Y.get(i) <= (p.y_pos + p.imgH)) {
+    if (b.bmb_X.get(i) >= p.x_pos && b.bmb_X.get(i) <= w) {
+      if (b.bmb_Y.get(i) >= p.y_pos && b.bmb_Y.get(i) <= h) {
 
-        
         hit = true;
       }
     }
@@ -82,49 +115,59 @@ static class Logic {
 
 
   public boolean collision(int x, int y, Tank t) {
-   boolean hit = false;
-   int w = t.x_pos + t.imgW;
-   int h = t.y_pos + t.imgH;
+    // check to see if there is a collision between a tank and a bomb
+    // using box based detection 
 
-   if (x >= t.x_pos && x <= w) {
-     if (y >= t.y_pos && y <= h) {
-          System.out.format("\nx: %d, y: %d, tankx: %d, tanky: %d, tankxw: %d, tankyh: %d\n", x, y, t.x_pos, t.y_pos, w, h);
-       hit = true;
-     }
-   }
+    boolean hit = false;
 
-   return hit;
-  }
+    int w = t.x_pos + t.imgW;
+    int h = t.y_pos + t.imgH;
 
+    if (x >= t.x_pos && x <= w) {
+      if (y >= t.y_pos && y <= h) {
+        //System.out.format("\nx: %d, y: %d, tankx: %d, tanky: %d, tankxw: %d, tankyh: %d\n", x, y, t.x_pos, t.y_pos, w, h);
+        hit = true;
+      }
+    }
 
-  public void planeDropBomb(Plane p) {
-  }
-
-
-  boolean tankHit(Bomb b, Tank t) {
-   boolean hit = false;
-   
-   if(collision(b.x_pos, b.y_pos, t) && t.hitBy != b.id) {
-     //System.out.println("hitby : " + t.hitBy + " id " + b.id);
-     t.health -= 25;
-     t.hitBy = b.id;
-     hit = true; 
-   }
     return hit;
   }
 
 
-  boolean planeHit(Plane p, Tank t) {
-    //System.out.println("planeHit");
+  boolean tankHit(Bomb b, Tank t) {
+    // check to see if given tank has been hit 
+    // update its health 
     boolean hit = false;
-    //System.out.println("planeHit tank count " + t.count);
+
+    if (collision(b.x_pos, b.y_pos, t)) {
+
+      for (int i = 0; i < t.hitBy.size(); i++) {
+        System.out.format("previous hit: t.hitBy %d, bomb id: %d\n", t.hitBy.get(i), b.id);
+        if (t.hitBy.get(i) == b.id) {
+          hit = true;
+        }
+      }
+
+
+      if (!hit) {
+        t.hitBy.add(b.id);
+        t.health -= b.damage;
+      }
+    }
+    return hit;
+  }
+
+  boolean planeHit(Plane p, Tank t) {
+    // check to see if a plane has been hit 
+    // update its health 
+
+    boolean hit = false;
     for (int i = 0; i < t.count; i++) { 
-      //System.out.println("planeHit Loop at " + i);
       if (collision(p, t.currentBomb, i) && !hit) {
         p.health -= t.currentBomb.damage;
         if (p.health <= 0) { 
-           t.scored(); 
-           p.alive = false;
+          t.scored(); 
+          p.alive = false;
         }
         hit = true;
       }

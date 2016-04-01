@@ -1,3 +1,22 @@
+/**********
+ Cartwright, Stephen D
+ Art 297A Stone
+Bombs Away: healthBar class - holds different information related to vehicle health bars
+
+
+*********/
+
+/*
+Variables 
+  - int p1..p4: starting x,y ending x,y 
+  - int colour: current color at any time
+  - color: colors for health bar
+  - final int r, y, g: given values for the health bar of vehicle 
+  green full, yellow medium, red low, black next to death
+  
+*/
+
+
 class healthBar {
 
   public int p1, p2, p3, p4, colour;
@@ -16,16 +35,19 @@ class healthBar {
   }
 
   public void setInitPoint(int x, int y) {
+    // update initali x, y
     p1 = x;
     p2 = y;
   }
 
   public void setFinalPoint(int x, int y) {
+    // update final x, y
     p3 = x;
     p4 = y;
   }
 
   public void setPoints(int x1, int y1, int x2, int y2) {
+    // update both x,y pairs together
     p1 = x1;
     p2 = y1;
     p3 = x2;
@@ -33,6 +55,7 @@ class healthBar {
   }
 
   public void drawHealthBar(int colour) {
+    // draw the health bar at p1..p4 with correct color
     strokeWeight(2);
     colour = abs(colour);
 
