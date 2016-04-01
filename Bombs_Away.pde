@@ -180,8 +180,9 @@ void draw() {
     text("Instructions", 100, height/2-150);
     text("Player 1\nUse WASD to move gun laser for up down left right resp.\nUse left and right arrow keys to move, and down key to fire.\n", 150, height/2-50);
     text("Player 2\nMouse left and right button to move / and or aim and center wheel to fire.\n 1, 2 key to toggle gun laser\n", 150, height/2+75);
-    text("Health bars are displayed below the players and enemies\n", 150, height/2+200);
+    text("Health bars are displayed below the players and enemies,\n and bombs replenish every 10 seconds\n", 150, height/2+200);
     text("r key to resume, p to pause", 150, height/2+275);
+    text("r key to Start!!", 150, height/2+325);
     break;  
   case gameOver:
     background(255);
